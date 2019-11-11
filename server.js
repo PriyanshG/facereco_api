@@ -47,10 +47,10 @@ app.post('/signin',(req,res)=>{
 	
 	//res.json('dfs');
 	//console.log(req.body);
-	console.log(req.body);
+	//console.log(req.body);
 	if(req.body.email===database.users[0].email && req.body.password===database.users[0].password){
 		/*console.log('dfsdsa');*/
-		res.json('success');
+		res.json(database.users[0]);
 	}
 	else {
 	/*	console.log('sd');*/
@@ -69,7 +69,6 @@ app.post('/register',(req,res)=>{
 		id:'3',
 		name:name,
 		email:email,
-		password:password,
 		entries:0,
 		joined:new Date(),
 	});
