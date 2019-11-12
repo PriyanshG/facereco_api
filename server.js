@@ -2,8 +2,25 @@ const express=require('express');
 const bcrypt=require('bcrypt-nodejs');
 const bodyParser=require('body-parser');
 const cors=require('cors');
+const knex=require('knex');
+
+const db=knex({
+
+  client: 'pg',
+  connection: {
+    host : '127.0.0.1',
+    user : 'Priyansh',
+    password : '123',
+    database : 'facereco'
+  }
+});
+
+/*console.log(db.select('*').from('users').then(data=>{
+	console.log(data);
+}));*/
 
 const app=express();
+
 
 // app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -44,36 +61,62 @@ app.get('/',(req,res)=>{
 
 app.post('/signin',(req,res)=>{
 
-	
-	//res.json('dfs');
-	//console.log(req.body);
-	//console.log(req.body);
-	if(req.body.email===database.users[0].email && req.body.password===database.users[0].password){
-		/*console.log('dfsdsa');*/
-		res.json(database.users[0]);
-	}
-	else {
-	/*	console.log('sd');*/
-		res.status(400).json('Cannot lauda');
-	}
+	db.select('email','hash').from('login')
+	  .where('email','=',req.body.email)
+	  .then(data=>{
+	  	const isvalid=bcrypt.compareSync(req.body.password,data[0].hash);
+	  	console.log(isvalid,data);
+	  	if(isvalid){
+	  		return db.select('*').from('users')
+	  		  .where('email','=',req.body.email)
+	  		  .then(user=>{
+	  		  	console.log(user);
+	  		  	res.json(user[0])
+	  		  })
+	  		  .catch(err=>res.status(400).json('unable to get user'))
+
+	  	}
+	  	else
+	  		res.status(400).json('wrong credential');
+	  })
+	  .catch(err=>res.status(400).json('wrong credential'));
 });
 
 
 app.post('/register',(req,res)=>{
 	
 	const {email,name,password}=req.body;
-	bcrypt.hash(password,null,null,function(err,hash){
-		console.log(hash);
-	});
-	database.users.push({
-		id:'3',
-		name:name,
-		email:email,
-		entries:0,
-		joined:new Date(),
-	});
+	const hash=bcrypt.hashSync(password);
 
-	res.json(database.users[database.users.length-1]);
+	db.transaction(trx=>{
+		trx.insert({
+			hash:hash,
+			email:email
+		})
+		.into('login')
+		.returning('email')
+		.then(loginemail=>{
+			return trx('users')
+				.returning('*')
+				.insert({
+					email:loginemail[0],
+					name:name,
+					joined:new Date()
+				})
+				.then(user=>{
+					res.json(user[0]);
+				})
+				.catch(err=>res.status(400).json('unable to register'));
+
+		})
+		.then(trx.commit)
+		.catch(trx.rollback);
+
+
+	})
+			 
+
+	//res.json(database.users[database.users.length-1]);
 
 });
 
@@ -81,32 +124,31 @@ app.post('/register',(req,res)=>{
 app.get('/profile/:id',(req,res)=>{
 
 	const{id}=req.params;
-	let flag=0;
-	database.users.forEach(user=>{
-		if(user.id===id){
-			flag=1;
-			return res.json(user);
-		}
-	});
-	if(!flag)
-		res.json('No user found');
+
+	db.select('*').from('users').where({id}) //('id':id) 
+	  .then(user=>{
+	  	if(user.length){
+	  	res.json(user[0]);
+	  	}
+	  	else
+	  		res.status(400).json('Not found');
+
+	  });
+/*
+		res.json('No user found');*/
 
 });
 
 app.put('/image',(req,res)=>{
 	
 	const{id}=req.body;
-	let flag=false;
-	database.users.forEach(user=>{
-		if(user.id===id){
-			flag=1;
-			user.entries++;
-			return res.json(user.entries);
-		}
-	})
-
-	if(flag===0)
-		res.status(400).json('not found');
+	db('users').where('id','=',id)
+	  .increment('entries',1)
+	  .returning('entries')
+	  .then(entries=>{
+	  	res.json(entries[0]);
+	  })
+	  .catch(err=>res.status(400).json('unable to get entries'));
 
 })
 
