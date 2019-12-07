@@ -14,10 +14,8 @@ const db=knex({
 
   client: 'pg',
   connection: {
-    host : 'postgresql-parallel-36746',
-    user : 'Priyansh',
-    password : '123',
-    database : 'facereco'
+    host : 'process.env.DATABASE_URL',
+    ssl:true,
   }
 });
 
