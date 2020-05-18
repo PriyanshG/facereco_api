@@ -14,6 +14,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 		.into('login')
 		.returning('email')
 		.then(loginemail=>{
+			console.log(loginemail);
 			return trx('users')
 				.returning('*')
 				.insert({
