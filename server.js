@@ -19,9 +19,6 @@ const db=knex({
   }
 });
 
-/*console.log(db.select('*').from('users').then(data=>{
-	console.log(data);
-}));*/
 
 const app=express();
 
@@ -58,7 +55,6 @@ const database={
 		}
 	]
 }
-console.log(process.env);
 app.get('/',(req,res)=>{res.send('it is working')});
 
 app.post('/signin',signIn.handleSignIn(db,bcrypt));
