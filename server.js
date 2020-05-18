@@ -58,7 +58,7 @@ const database={
 		}
 	]
 }
-
+console.log(process.env);
 app.get('/',(req,res)=>{res.send('it is working')});
 
 app.post('/signin',signIn.handleSignIn(db,bcrypt));
@@ -83,6 +83,6 @@ app.post('/imageurl',(req,res)=>{image.handleApiCall(req,res)})
 
 */
 
-app.listen(process.env.PORT || 3000,()=>{
-	console.log(`app is running ${process.env.PORT || 3000}`);
+app.listen(process.env.PORT || 4000,()=>{
+	console.log(`app is running ${process.env.PORT || 4000}`);
 });

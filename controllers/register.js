@@ -4,7 +4,8 @@ const handleRegister=(req,res,db,bcrypt)=>{
 	const hash=bcrypt.hashSync(password);
 
 	if(!email || !name || !password)
-		return res.status(400).json('Incorrect form submis')
+		return res.status(400).json('Incorrect form submit');
+	
 	db.transaction(trx=>{
 		trx.insert({
 			hash:hash,
@@ -13,6 +14,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 		.into('login')
 		.returning('email')
 		.then(loginemail=>{
+			console.log(loginemail,'a');
 			return trx('users')
 				.returning('*')
 				.insert({
@@ -27,7 +29,11 @@ const handleRegister=(req,res,db,bcrypt)=>{
 
 		})
 		.then(trx.commit)
-		.catch(trx.rollback);
+		.catch (function(err){
+			trx.rollback;
+			console.log(err);
+			res.status(400).json('Email already exists!')
+		})
 
 
 	})

@@ -6,7 +6,9 @@ const handleSignIn=(db,bcrypt)=>(req,res)=>{
 	db.select('email','hash').from('login')
 	  .where('email','=',req.body.email)
 	  .then(data=>{
-	  	const isvalid=bcrypt.compareSync(req.body.password,data[0].hash);
+		if(!data)
+			res.status(400).json('No user with this email!')
+		const isvalid=bcrypt.compareSync(req.body.password,data[0].hash);
 	  	console.log(isvalid,data);
 	  	if(isvalid){
 	  		return db.select('*').from('users')
@@ -19,9 +21,9 @@ const handleSignIn=(db,bcrypt)=>(req,res)=>{
 
 	  	}
 	  	else
-	  		res.status(400).json('wrong credential');
+	  		res.status(400).json('Wrong Credential');
 	  })
-	  .catch(err=>res.status(400).json('wrong credential'));
+	  .catch(err=>res.status(400).json('No User Found!'));
 }
 
 module.exports={
