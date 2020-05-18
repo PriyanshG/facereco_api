@@ -32,6 +32,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 		.catch (function(err){
 			trx.rollback;
 			console.log(err);
+			res.status(400).json('Email already exists!')
 		})
 
 
