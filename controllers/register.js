@@ -29,7 +29,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 
 		})
 		.then(trx.commit)
-		.catch(trx.rollback,console.log('aa') );
+		.catch(trx.rollback,res.status(400).json('Email already exists') );
 
 
 	})
