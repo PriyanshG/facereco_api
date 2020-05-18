@@ -23,7 +23,7 @@ const handleSignIn=(db,bcrypt)=>(req,res)=>{
 	  	else
 	  		res.status(400).json('Wrong Credential');
 	  })
-	  .catch(err=>res.status(400).json('wrong credential'));
+	  .catch(err=>res.status(400).json('No User Found!'));
 }
 
 module.exports={
