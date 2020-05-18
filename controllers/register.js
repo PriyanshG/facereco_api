@@ -29,7 +29,10 @@ const handleRegister=(req,res,db,bcrypt)=>{
 
 		})
 		.then(trx.commit)
-		.catch(trx.rollback);
+		.catch (function(err){
+			trx.rollback;
+			console.log(err);
+		})
 
 
 	})
