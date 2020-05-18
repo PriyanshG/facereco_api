@@ -4,7 +4,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 	const hash=bcrypt.hashSync(password);
 
 	if(!email || !name || !password)
-		return res.status(400).json('Incorrect form submis')
+		return res.status(400).json('Incorrect form submit')
 	db.transaction(trx=>{
 		trx.insert({
 			hash:hash,
