@@ -9,7 +9,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 	.where('email','=',req.body.email)
 	.then(data=>{
 		if(data)
-			res.json(400).json('Email already exits');
+			res.status(400).json('Email already exits');
 	})
 	db.transaction(trx=>{
 		trx.insert({
