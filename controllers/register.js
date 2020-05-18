@@ -14,7 +14,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 		.into('login')
 		.returning('email')
 		.then(loginemail=>{
-			console.log(loginemail);
+			console.log(loginemail,'a');
 			return trx('users')
 				.returning('*')
 				.insert({
@@ -29,7 +29,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 
 		})
 		.then(trx.commit)
-		.catch(trx.rollback,res.status(400).json('Email already exists') );
+		.catch(trx.rollback);
 
 
 	})
