@@ -9,12 +9,10 @@ const handleSignIn=(db,bcrypt)=>(req,res)=>{
 		if(!data)
 			res.status(400).json('No user with this email!')
 		const isvalid=bcrypt.compareSync(req.body.password,data[0].hash);
-	  	console.log(isvalid,data);
 	  	if(isvalid){
 	  		return db.select('*').from('users')
 	  		  .where('email','=',req.body.email)
 	  		  .then(user=>{
-	  		  	console.log(user);
 	  		  	res.json(user[0])
 	  		  })
 	  		  .catch(err=>res.status(400).json('unable to get user'))
