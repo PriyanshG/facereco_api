@@ -5,13 +5,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 
 	if(!email || !name || !password)
 		return res.status(400).json('Incorrect form submit');
-	db.select('email').from('login')
-	.where('email','=',req.body.email)
-	.then(data=>{
-		console.log(data);
-		if(data)
-			res.status(400).json('Email already exits');
-	})
+	
 	db.transaction(trx=>{
 		trx.insert({
 			hash:hash,
