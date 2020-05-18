@@ -6,6 +6,7 @@ const handleSignIn=(db,bcrypt)=>(req,res)=>{
 	db.select('email','hash').from('login')
 	  .where('email','=',req.body.email)
 	  .then(data=>{
+		  res.status(200).json(data);
 	  	const isvalid=bcrypt.compareSync(req.body.password,data[0].hash);
 	  	console.log(isvalid,data);
 	  	if(isvalid){
