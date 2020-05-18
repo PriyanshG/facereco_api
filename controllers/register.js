@@ -8,6 +8,7 @@ const handleRegister=(req,res,db,bcrypt)=>{
 	db.select('email').from('login')
 	.where('email','=',req.body.email)
 	.then(data=>{
+		console.log(data);
 		if(data)
 			res.status(400).json('Email already exits');
 	})
